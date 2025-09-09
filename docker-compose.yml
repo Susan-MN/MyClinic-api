@@ -1,0 +1,58 @@
+
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: myclinic-sql
+    restart: always
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  myclinic-api:
+    build:
+      context: .
+      dockerfile: MyClinic/Dockerfile
+    container_name: myclinic-api
+    depends_on:
+      - sqlserver
+      - keycloak  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MyClinicDB;User=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+      - Keycloak__Authority=http://keycloak:8080/realms/MyClinicRealm
+      - Keycloak__Audience=myclinic-frontend
+    ports:
+      - "5000:8080"
+
+  myclinic-frontend:
+    build:
+      context:  ../myclinic-frontend
+      dockerfile: Dockerfile
+    container_name: myclinic-frontend
+    depends_on:
+      - myclinic-api
+      - keycloak  
+    environment:
+      - API_URL=http://myclinic-api:8080
+      - KEYCLOAK_URL=http://keycloak:8080
+    ports:
+      - "4200:4200"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.0
+    container_name: keycloak
+    command: start-dev   
+    restart: always
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8080:8080"
+
+volumes:
+  sql_data:
