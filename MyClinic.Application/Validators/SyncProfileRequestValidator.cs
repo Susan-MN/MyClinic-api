@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MyClinic.Domain.DTO;
+using MyClinic.Application.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

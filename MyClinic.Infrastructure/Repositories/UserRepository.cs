@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MyClinic.Application.Interfaces.Repositories;
+using MyClinic.Infrastructure.Repositories;
 using MyClinic.Domain.Entities;
 using MyClinic.Infrastructure.Data;
+using MyClinic.Infrastructure.Interfaces.Repositories;
 
 namespace MyClinic.Infrastructure.Repositories
 {

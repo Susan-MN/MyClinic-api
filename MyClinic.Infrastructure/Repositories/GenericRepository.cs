@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MyClinic.Application.Interfaces.Repositories;
+using MyClinic.Infrastructure.Interfaces.Repositories;
 using MyClinic.Infrastructure.Data;
 
-namespace MyClinic.Domain.Entities
+namespace MyClinic.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T>
         where T : class
@@ -33,9 +33,25 @@ namespace MyClinic.Domain.Entities
 
         public void UpdateAsync(T entity) => _dbSet.Update(entity);
 
-        public async Task<T?> GetByKeycloakIdAsync(string keycloakId) =>
-            await _dbSet.FirstOrDefaultAsync(e =>
-                EF.Property<string>(e, "KeycloakId") == keycloakId
-            );
+        public async Task<T?> GetByKeycloakIdAsync(string keycloakId)
+        {
+            if (string.IsNullOrEmpty(keycloakId))
+                return null;
+
+            try
+            {
+                return await _dbSet.FirstOrDefaultAsync(e =>
+                    EF.Property<string?>(e, "KeycloakId") == keycloakId
+                );
+            }
+            catch (Exception ex)
+            {
+                
+                throw new InvalidOperationException(
+                    $"Error querying {typeof(T).Name} by KeycloakId. " +
+                    $"This entity may not have a KeycloakId property configured. " +
+                    $"Original error: {ex.Message}", ex);
+            }
+        }
     }
 }
