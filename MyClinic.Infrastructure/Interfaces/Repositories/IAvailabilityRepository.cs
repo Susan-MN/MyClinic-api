@@ -6,7 +6,6 @@ namespace MyClinic.Infrastructure.Interfaces.Repositories
     {
         Task<Availability?> GetByDoctorIdAsync(int doctorId);
         
-
     }
 }
 
