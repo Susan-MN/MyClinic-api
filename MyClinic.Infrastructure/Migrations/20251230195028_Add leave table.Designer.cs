@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyClinic.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using MyClinic.Infrastructure.Data;
 namespace MyClinic.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251230195028_Add leave table")]
+    partial class Addleavetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,78 +125,6 @@ namespace MyClinic.Infrastructure.Migrations
                     b.HasIndex("DoctorId");
 
                     b.ToTable("Availabilities");
-                });
-
-            modelBuilder.Entity("MyClinic.Domain.Entities.AvailabilityDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("SlotDuration")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId", "DayOfWeek")
-                        .IsUnique();
-
-                    b.ToTable("AvailabilityDays");
-                });
-
-            modelBuilder.Entity("MyClinic.Domain.Entities.AvailabilityException", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<TimeSpan?>("CustomEndTime")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan?>("CustomStartTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("ExceptionDate")
-                        .HasColumnType("date");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId", "ExceptionDate")
-                        .IsUnique();
-
-                    b.ToTable("AvailabilityExceptions");
                 });
 
             modelBuilder.Entity("MyClinic.Domain.Entities.Doctor", b =>
@@ -342,28 +273,6 @@ namespace MyClinic.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("MyClinic.Domain.Entities.Availability", b =>
-                {
-                    b.HasOne("MyClinic.Domain.Entities.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
-            modelBuilder.Entity("MyClinic.Domain.Entities.AvailabilityDay", b =>
-                {
-                    b.HasOne("MyClinic.Domain.Entities.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
-            modelBuilder.Entity("MyClinic.Domain.Entities.AvailabilityException", b =>
                 {
                     b.HasOne("MyClinic.Domain.Entities.Doctor", "Doctor")
                         .WithMany()

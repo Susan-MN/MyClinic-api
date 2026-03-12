@@ -176,8 +176,8 @@ namespace MyClinic.Infrastructure.Servives
         {
 
             // Convert TimeSpan to "HH:mm" strings
-            var startTimeString = appointment.StartTime.ToString(@"hh\:mm");
-            var endTimeString = appointment.EndTime.ToString(@"hh\:mm");
+            var startTimeString = appointment.StartTime.ToString(@"HH\:mm");
+            var endTimeString = appointment.EndTime.ToString(@"HH\:mm");
 
             // Use UserId as string identifier for now
             var patientIdString = appointment.UserId.ToString();

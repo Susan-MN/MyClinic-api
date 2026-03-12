@@ -35,8 +35,12 @@ namespace MyClinic
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
+            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>(); // Keep for migration
+            builder.Services.AddScoped<IAvailabilityDayRepository, AvailabilityDayRepository>();
+            builder.Services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             builder.Services.AddScoped<ISlotConfigRepository, SlotConfigRepository>();
+            builder.Services.AddScoped<ILeaveRepository, LeaveRepository>(); // Keep for migration
+           
 
             // Add services to the container.
             builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -44,6 +48,7 @@ namespace MyClinic
             builder.Services.AddScoped<ISlotConfigService, SlotConfigService>();
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+            builder.Services.AddScoped<ILeaveService, LeaveService>();
 
             //COR
             builder.Services.AddCors(options =>
@@ -59,11 +64,16 @@ namespace MyClinic
                  {
                     
                      fv.RegisterValidatorsFromAssemblyContaining<SyncProfileRequestValidator>();
-                 }); 
+                 });
+            builder.Services.AddControllers()
+                 .AddJsonOptions(options =>
+                 {
+                     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                 });
 
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             // Register authorization handler for database-based role checks

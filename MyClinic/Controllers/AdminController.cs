@@ -13,16 +13,18 @@ namespace MyClinic.Controllers
     {
         private readonly IDoctorService _doctorService;
         private readonly ISlotConfigService _slotConfigService;
+        private readonly ILeaveService _leaveService;
 
-        public AdminController(IDoctorService doctorService, ISlotConfigService slotConfigService)
+        public AdminController(IDoctorService doctorService, ISlotConfigService slotConfigService, ILeaveService leaveService)
         {
             _doctorService = doctorService;
             _slotConfigService = slotConfigService;
+            _leaveService = leaveService;
         }
 
-       
-       
-        
+
+
+
         [HttpGet("doctors")]
         public async Task<IActionResult> GetAllDoctors()
         {
@@ -89,6 +91,45 @@ namespace MyClinic.Controllers
         {
             var slotConfig = await _slotConfigService.GetSlotConfigAsync();
             return Ok(slotConfig);
+        }
+
+        [HttpGet("leaves")]
+        public async Task<IActionResult> GetAllLeaves()
+        {
+
+            var leaves = await _leaveService.GetAllLeavesAsync();
+            return Ok(leaves);
+        }
+        [HttpGet("leaves/pending")]
+        public async Task<IActionResult> GetPendingLeaves()
+        {
+            var leaves = await _leaveService.GetPendingLeavesAsync();
+            return Ok(leaves);
+        }
+
+        [HttpPut("leaves/{leaveId:int}/approve")]
+        public async Task<IActionResult> ApproveLeave(int leaveId)
+        {
+
+            var leave = await _leaveService.ApproveLeaveAsync(leaveId);
+            if (leave == null)
+                return NotFound(new { Message = "Leave not found" });
+
+            return Ok(leave);
+        }
+
+        [HttpPut("leaves/{leaveId:int}/reject")]
+        public async Task<IActionResult> RejectLeave(int leaveId)
+        {
+
+            var leave = await _leaveService.RejectLeaveAsync(leaveId);
+            if (leave == null)
+            {
+                // Leave was deleted (rejected) - this is expected behavior
+                return Ok(new { Message = "Leave rejected and removed successfully" });
+            }
+
+            return Ok(leave);
         }
     }
 }

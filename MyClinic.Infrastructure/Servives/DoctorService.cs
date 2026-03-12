@@ -70,10 +70,15 @@ namespace MyClinic.Infrastructure.Servives
             var doctor = await _doctorRepository.GetByKeycloakIdAsync(keycloakId);
             if (doctor == null)
                 return null;
+            // Track if specialty is being set/updated
+            bool specialtyBeingSet = false;
 
             // Update only provided fields
             if (!string.IsNullOrEmpty(request.Specialty))
+            {
                 doctor.Specialty = request.Specialty;
+                specialtyBeingSet = true;
+            }
 
             if (!string.IsNullOrEmpty(request.ImageUrl))
                 doctor.ImageUrl = request.ImageUrl;
@@ -83,8 +88,15 @@ namespace MyClinic.Infrastructure.Servives
 
             if (!string.IsNullOrEmpty(request.PhoneNumber))
                 doctor.PhoneNumber = request.PhoneNumber;
-            // Recalculate ProfileComplete 
-            var hasRequiredFields =
+            // If specialty is being set, automatically mark profile as complete
+            if (specialtyBeingSet)
+            {
+                doctor.ProfileComplete = true;
+            }
+            else
+            {
+                // Recalculate ProfileComplete 
+                var hasRequiredFields =
                 !string.IsNullOrWhiteSpace(doctor.Username) &&
                 !string.IsNullOrWhiteSpace(doctor.Email) &&
                 !string.IsNullOrWhiteSpace(doctor.Specialty) &&
@@ -92,11 +104,11 @@ namespace MyClinic.Infrastructure.Servives
                 !string.IsNullOrWhiteSpace(doctor.Bio) &&
                 !string.IsNullOrWhiteSpace(doctor.ImageUrl);
 
-            var availability = await _availabilityRepository.GetByDoctorIdAsync(doctor.Id);
-            var hasAvailability = availability != null && availability.IsActive;
+                var availability = await _availabilityRepository.GetByDoctorIdAsync(doctor.Id);
+                var hasAvailability = availability != null && availability.IsActive;
 
-            doctor.ProfileComplete = hasRequiredFields && hasAvailability;
-
+                doctor.ProfileComplete = hasRequiredFields && hasAvailability;
+            }
 
             _doctorRepository.UpdateAsync(doctor);
             await _doctorRepository.SaveChangesAsync();
