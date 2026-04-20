@@ -21,8 +21,9 @@ namespace MyClinic.Infrastructure.Data
         public DbSet<AvailabilityDay> AvailabilityDays => Set<AvailabilityDay>();
         public DbSet<AvailabilityException> AvailabilityExceptions => Set<AvailabilityException>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
-        public DbSet<Leave> Leaves => Set<Leave>(); // Keep for migration, will be removed later
+        public DbSet<Leave> Leaves => Set<Leave>(); 
 
+        public DbSet<ProcessedWebhookEvent> ProcessedWebhookEvents => Set<ProcessedWebhookEvent>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -83,6 +84,20 @@ namespace MyClinic.Infrastructure.Data
             modelBuilder.Entity<AvailabilityException>()
                 .HasIndex(e => new { e.DoctorId, e.ExceptionDate })
                 .IsUnique();
+            modelBuilder.Entity<ProcessedWebhookEvent>()
+                .HasIndex(x => x.StripeEventId)
+                .IsUnique();
+
+            modelBuilder.Entity<ProcessedWebhookEvent>()
+                .Property(x => x.StripeEventId)
+                .IsRequired();
+
+            modelBuilder.Entity<Appointment>()
+                .Property(x => x.PaymentStatus)
+                .HasConversion<int>();
+            modelBuilder.Entity<Appointment>()
+                .Property(x => x.Amount)
+                .HasPrecision(18, 2);
 
 
         }

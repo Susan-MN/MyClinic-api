@@ -157,7 +157,10 @@ namespace MyClinic.Infrastructure.Servives
                 AppointmentDate = appointmentDateUtc,
                 StartTime = startTime,
                 EndTime = endTime,
-                Status = AppointmentStatus.Pending
+                Status = AppointmentStatus.Pending,
+                PaymentStatus = PaymentStatus.Pending,
+                Amount = 50m,
+                Currency = "usd"
             };
 
             await _appointmentRepository.AddAsync(appointment);

@@ -28,20 +28,17 @@ namespace MyClinic.Application.Validators
                 .NotEmpty().WithMessage("Reason is required")
                 .MaximumLength(500).WithMessage("Reason cannot exceed 500 characters");
         }
-
         private bool BeValidDate(string date)
         {
             if (string.IsNullOrWhiteSpace(date))
                 return false;
             return DateOnly.TryParse(date, out _);
         }
-
         private bool BeValidDateRange(string startDate, string endDate)
         {
             if (!DateOnly.TryParse(startDate, out var start) ||
                 !DateOnly.TryParse(endDate, out var end))
                 return false;
-
             return end >= start;
         }
     }

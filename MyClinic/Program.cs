@@ -1,18 +1,20 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MyClinic.Infrastructure.Interfaces.Repositories;
-using MyClinic.Infrastructure.Interfaces.Services;
+using MyClinic.Application.Mapping;
 using MyClinic.Application.Validators;
 using MyClinic.Domain.Entities;
+using MyClinic.Infrastructure.Authorization;
 using MyClinic.Infrastructure.Data;
+using MyClinic.Infrastructure.Interfaces.Repositories;
+using MyClinic.Infrastructure.Interfaces.Services;
+using MyClinic.Infrastructure.Payments;
 using MyClinic.Infrastructure.Repositories;
 using MyClinic.Infrastructure.Servives;
-using MyClinic.Application.Mapping;
-using MyClinic.Infrastructure.Authorization;
-using Microsoft.AspNetCore.Authorization;
 using Serilog;
+using Stripe;
 using System.Security.Claims;
 
 namespace MyClinic
@@ -32,6 +34,11 @@ namespace MyClinic
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("MyClinic.Infrastructure"))
             );
+            //Bind StripeOptions
+            builder.Services.Configure<StripeOptions>(
+                builder.Configuration.GetSection("Stripe"));
+
+            //Register services
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
@@ -40,7 +47,8 @@ namespace MyClinic
             builder.Services.AddScoped<IAvailabilityExceptionRepository, AvailabilityExceptionRepository>();
             builder.Services.AddScoped<ISlotConfigRepository, SlotConfigRepository>();
             builder.Services.AddScoped<ILeaveRepository, LeaveRepository>(); // Keep for migration
-           
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            
 
             // Add services to the container.
             builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -49,6 +57,7 @@ namespace MyClinic
             builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddScoped<ILeaveService, LeaveService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
             //COR
             builder.Services.AddCors(options =>
@@ -171,6 +180,7 @@ namespace MyClinic
                 });
             builder.Host.UseSerilog();
             var app = builder.Build();
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

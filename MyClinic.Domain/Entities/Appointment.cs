@@ -17,7 +17,15 @@ namespace MyClinic.Domain.Entities
         public DateTime AppointmentDate { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-        public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending; 
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
+
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+        public string? StripeSessionId { get; set; }
+        public string? StripePaymentIntentId { get; set; }
+        public decimal Amount { get; set; }
+        public string Currency { get; set; } = "usd";
+        public DateTime? PaidAt { get; set; }
+        public string? PaymentFailureReason { get; set; }
     }
 }
 
