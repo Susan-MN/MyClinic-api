@@ -1,4 +1,5 @@
 {
+  "default": "http",
   "profiles": {
     "http": {
       "commandName": "Project",
