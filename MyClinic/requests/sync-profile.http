@@ -1,0 +1,13 @@
+@host = http://localhost:5000
+
+POST {{host}}/api/profile/sync
+Content-Type: application/json
+
+{
+  "KeycloakId": "test-123",
+  "Username": "testuser",
+  "Email": "test@example.com",
+  "Role": "Doctor"
+}
+
+###
