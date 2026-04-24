@@ -1,3 +1,17 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/universal:5.1.5-noble"
+    "image": "mcr.microsoft.com/devcontainers/universal:5.1.5-noble",
+    "features": {
+        "ghcr.io/devcontainers/features/git-lfs:1": {
+            "version": "3.7.1",
+            "autoPull": false,
+            "installDirectlyFromGitHubRelease": true
+        },
+        "ghcr.io/skriptfabrik/devcontainer-features/gitlab-cli:1": {
+            "version": "1.91.0"
+        },
+        "ghcr.io/devcontainers-extra/features/mise:1": {
+            "version": "v2026.4.3"
+        }
+    },
+    "postCreateCommand": "mise trust --yes && mise install"
 }
