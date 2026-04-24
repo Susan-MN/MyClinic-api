@@ -29,20 +29,6 @@ services:
     ports:
       - "5000:8080"
 
-  myclinic-frontend:
-    build:
-      context:  ../myclinic-frontend
-      dockerfile: Dockerfile
-    container_name: myclinic-frontend
-    depends_on:
-      - myclinic-api
-      - keycloak  
-    environment:
-      - API_URL=http://myclinic-api:8080
-      - KEYCLOAK_URL=http://keycloak:8080
-    ports:
-      - "4200:4200"
-
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.0
     container_name: keycloak
