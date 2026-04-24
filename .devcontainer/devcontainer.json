@@ -1,5 +1,5 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/universal:5.1.5-noble",
+    "image": "mcr.microsoft.com/devcontainers/base:debian13",
     "features": {
         "ghcr.io/devcontainers/features/git-lfs:1": {
             "version": "3.7.1",
